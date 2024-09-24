@@ -10,8 +10,8 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: '1234', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
-                    sh 'docker tag react-ui-library your-docker-registry/react-ui-library:latest'
-                    sh 'docker push your-docker-registry/react-ui-library:latest'
+                    sh 'docker tag react-ui-library markos1001/react-ui-library:latest'
+                    sh 'docker push markos1001/react-ui-library:latest'
                 }
             }
         }
