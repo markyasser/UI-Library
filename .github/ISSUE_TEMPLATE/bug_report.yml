@@ -1,96 +1,75 @@
-name: Report an issue with @mantine/* or @mantinex/* scoped package
-description: Use this template to report issues with the library. To ask questions or to suggest new features, use GitHub discussions instead
+name: Bug Report
+description: File a bug report
+title: 'issue: '
 body:
-  - type: checkboxes
-    id: dependencies
+  - type: markdown
     attributes:
-      label: Dependencies check up
-      description: Before submitting an issue please make sure that you use latest version of all @mantine/* packages.
-      options:
-        - label: I have verified that I use latest version of all @mantine/* packages
-          required: true
+      value: |
+        Thanks for taking the time to fill out this bug report!
   - type: input
     id: version
     attributes:
-      placeholder: 0.0.0
-      label: What version of @mantine/* packages do you have in package.json?
-    validations:
-      required: true
-  - type: dropdown
-    id: package
-    attributes:
-      label: What package has an issue?
-      options:
-        - '@mantine/core'
-        - '@mantine/hooks'
-        - '@mantine/dates'
-        - '@mantine/charts'
-        - '@mantine/form'
-        - '@mantine/notifications'
-        - '@mantine/tiptap'
-        - '@mantine/code-highlight'
-        - '@mantine/modals'
-        - '@mantine/dropzone'
-        - '@mantine/spotlight'
-        - '@mantine/nprogress'
-        - '@mantine/carousel'
-        - '@mantine/colors-generator'
-        - '@mantine/store'
-        - '@mantine/vanilla-extract'
-        - '@mantinex/mantine-logo'
-        - '@mantinex/demo'
-        - '@mantinex/dev-icons'
-        - '@mantinex/mantine-header'
-        - '@mantinex/mantine-meta'
-        - '@mantinex/shiki'
-    validations:
-      required: true
-
-  - type: dropdown
-    id: framework
-    attributes:
-      label: What framework do you use?
-      options:
-        - 'Next.js'
-        - 'Vite'
-        - 'Remix'
-        - 'Gatsby'
-        - 'Redwood'
-        - 'create-react-app (CRA)'
-        - 'Other, I will specify in the bug description'
-    validations:
-      required: true
-  - type: dropdown
-    id: browser
-    attributes:
-      label: In which browsers you can reproduce the issue?
-      options:
-        - 'All'
-        - 'Chrome'
-        - 'Safari'
-        - 'Firefox'
-        - 'Other, I will specify in the bug description'
-        - 'Not applicable – issue is not related to the browser'
-  - type: textarea
-    id: description
-    attributes:
-      label: Describe the bug
-      placeholder: A clear and concise description of what the bug is and how to reproduce it
+      label: Version Number
+      description: What's the version number?
+      placeholder: Version number.
     validations:
       required: true
   - type: input
-    id: link
+    id: codesandbox
     attributes:
-      label: If possible, include a link to a codesandbox with a minimal reproduction
-      description: Codesandbox template – https://codesandbox.io/p/sandbox/mantine-react-template-q4dd5d. Note that issues that cannot be reproduced by maintainers will be closed.
+      label: Codesandbox/Expo snack
+      description: Codesandbox/Expo snack link
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        V7
+        - [JS](https://codesandbox.io/s/great-paper-deove) Template
+        - [TS](https://codesandbox.io/s/eager-sun-jt4df) Template
+
+        V6
+        - [JS](https://codesandbox.io/s/mystifying-keller-5jwf5) Template
+        - [TS](https://codesandbox.io/s/romantic-moon-0chz7) Template
   - type: textarea
-    id: possibleFix
+    id: what-happened
     attributes:
-      label: Possible fix
-  - type: checkboxes
-    id: self-service
+      label: Steps to reproduce
+      placeholder: Tell us what you see!
+      value: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: what-expect
     attributes:
-      label: Self-service
-      description: You are welcome to contribute to the library, if you are willing to implement a fix for this issue, please check the box below. You can find contribution guide here – https://mantine.dev/contribute/
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
       options:
-        - label: I would be willing to implement a fix for this issue
+        - Firefox
+        - Chrome
+        - Safari
+        - Edge
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/react-hook-form/react-hook-form/blob/master/CODE_OF_CONDUCT.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

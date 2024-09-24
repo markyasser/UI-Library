@@ -1,11 +1,5 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
-  - name: Feature request
-    url: https://github.com/mantinedev/mantine/discussions/new
-    about: Request new feature
-  - name: Ask a question, give feedback, share your project
-    url: https://github.com/mantinedev/mantine/discussions
-    about: Connect with other community members with GitHub discussions
-  - name: Get help on Discord
-    url: https://discord.gg/wbH82zuWMN
-    about: Get help from maintainers on Discord
+  - name: Ask a question
+    url: https://github.com/react-hook-form/react-hook-form/discussions
+    about: Ask questions and discuss with other community members

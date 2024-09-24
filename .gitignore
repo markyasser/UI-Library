@@ -1,56 +1,46 @@
-# os
-.DS_Store
-
-## yarn
-.yarn-integrity
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
-
-# editor
-.idea/
-.vscode/
-.nova/
-.gitpod.yml
-
-# node
-node_modules/
-
 # Logs
 logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log*
 
-# env
-.env.test
-.env*.local
+# Coverage directory used by tools like istanbul
+coverage
 
-# build
-lib/
-cjs/
-esm/
+# Dependency directories
+node_modules/
+app/node_modules/
+example/node_modules/
+example/build/
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
 
-# typescript
-*.tsbuildinfo
+# Optional npm cache directory
+.npm
 
-# project
-next-env.d.ts
+# Optional eslint cache
 .eslintcache
-storybook-static
-.next
-packages/*/*/styles.css
-packages/*/*/styles.layer.css
-packages/@mantine/core/styles
-.stylelintcache
-____test.*
-apps/help.mantine.dev/out
-apps/mantine.dev/components/___test.internal.tsx
-apps/mantine.dev/.cache
-apps/mantine.dev/out
-apps/mantine.dev/.next
-apps/mantine.dev/src/.docgen/
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+.DS_Store
+/lib
+/dist
+/temp
+.idea/
+.rpt2_cache
+package-lock.json
+/cypress/videos
+/cypress/parallel-weights.json
+/cypress/screenshots
+/cypress/fixtures
