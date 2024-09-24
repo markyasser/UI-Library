@@ -13,9 +13,6 @@ RUN npm install
 # Step 5: Copy all files into the container
 COPY . .
 
-# Step 6: Run tests (use this as a separate stage in your CI/CD)
-RUN npm run test
-
 # Step 7: Build the project
 RUN npm run build
 

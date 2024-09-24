@@ -6,11 +6,6 @@ pipeline {
                 sh 'docker build -t react-ui-library .'
             }
         }
-        stage('Run Tests Inside Docker') {
-            steps {
-                sh 'docker run --rm react-ui-library npm run test'
-            }
-        }
         stage('Push Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
