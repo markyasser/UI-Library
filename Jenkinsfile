@@ -1,9 +1,5 @@
 pipeline {
     agent any
-    environment {
-        NODE_HOME = tool name: 'Node 18.6.0', type: 'NodeJSInstallation'
-        PATH = "${NODE_HOME}/bin:${env.PATH}"
-    }
     stages {
         stage('Build Docker Image') {
             steps {
