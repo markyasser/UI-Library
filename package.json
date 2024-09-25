@@ -38,6 +38,10 @@
     "setupFilesAfterEnv": [
       "<rootDir>/src/setupTests.ts"
     ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/dist/", 
+      "<rootDir>/node_modules/"
+    ],
     "collectCoverage": true,
     "coverageDirectory": "coverage",
     "coverageReporters": [
