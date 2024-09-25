@@ -9,7 +9,7 @@ pipeline {
                     echo "Change Log Output: ${changelogOutput}"
                     
                     // Validate the output of the changelog script
-                    if (changelogOutput.contains("Error")) { // Adjust this condition based on your script's output
+                    if (changelogOutput.contains("Error")) {
                         error("Changelog check failed. Please review the changelog.")
                     }
                 }
@@ -27,7 +27,6 @@ pipeline {
         }
         stage('Check Test Coverage') {
             steps {
-                // Check the code coverage if it is above 95% then only proceed
                 script {
                     // Run the tests and capture the output
                     def testOutput = sh(script: 'npm run test', returnStdout: true).trim()
@@ -50,14 +49,18 @@ pipeline {
         }
         stage('Push To Private Registry') {
             steps {
-                // Configure npm to use Verdaccio as the private registry
-                sh 'npm set registry http://localhost:4873/'
+                script {
+                    // Configure npm to use Verdaccio as the private registry
+                    sh 'npm set registry http://localhost:4873/'
 
-                // Login to the private registry (if needed)
-                sh 'npm login --registry=http://localhost:4873/'
+                    // Login to the private registry using credentials stored in Jenkins
+                    withCredentials([usernamePassword(credentialsId: '1234', passwordVariable: 'NPM_PASSWORD', usernameVariable: 'NPM_USERNAME')]) {
+                        sh 'echo "${NPM_PASSWORD}" | npm login --registry=http://localhost:4873/ --scope=@ui-library --username "${NPM_USERNAME}" --password-stdin'
+                    }
 
-                // Publish the package
-                sh 'npm publish --registry http://localhost:4873/'
+                    // Publish the package
+                    sh 'npm publish --registry http://localhost:4873/'
+                }
             }
         }
     }
