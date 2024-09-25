@@ -58,17 +58,24 @@ pipeline {
     post {
         success {
             script {
-                    def recipients = findRecipients()
-                    def changelogContent = readChangelog()
-                    
-                    if (recipients) {
-                        emailext(
-                            to: recipients.join(', '),
-                            subject: "New Version Available - Build #${env.BUILD_NUMBER}",
-                            body: "The build was successful. A new version is now available.\n\n### Change Log:\n${changelogContent}"
-                        )
-                    }
+                def recipients = findRecipients()
+                def changelogContent = convertMarkdownToHtml('CHANGELOG.md')
+
+                if (recipients) {
+                    emailext(
+                        to: recipients.join(', '),
+                        subject: "New Version Available - Build #${env.BUILD_NUMBER}",
+                        body: """<html>
+                            <body>
+                                <p>The build was successful. A new version is now available.</p>
+                                <h3>Change Log:</h3>
+                                ${changelogContent}
+                            </body>
+                        </html>""",
+                        mimeType: 'text/html'
+                    )
                 }
+            }
             echo 'Pipeline executed successfully'
         }
         failure {
@@ -85,8 +92,10 @@ def findRecipients() {
     return teamMembers
 }
 
-// Helper function to read the CHANGELOG.md file
-def readChangelog() {
-    def changelogFile = 'CHANGELOG.md'
-    return readFile(changelogFile).trim()
+// Helper function to read and convert the CHANGELOG.md file from markdown to HTML
+def convertMarkdownToHtml(markdownFile) {
+    def markdownContent = readFile(markdownFile).trim()
+    // Convert the markdown content to HTML (you can use an external command or library)
+    def htmlContent = sh(script: "echo \"${markdownContent}\" | markdown", returnStdout: true).trim()
+    return htmlContent
 }
