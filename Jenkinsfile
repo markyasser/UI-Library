@@ -50,7 +50,7 @@ pipeline {
         stage('Push on private registry') {
             steps {
                 withCredentials([string(credentialsId: 'npm-auth-token', variable: 'NPM_TOKEN')]) {
-                    sh 'npm publish --access private'
+                    sh 'npm publish'
                 }
             }
         }
