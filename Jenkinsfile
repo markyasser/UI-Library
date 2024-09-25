@@ -6,7 +6,6 @@ pipeline {
                 script {
                     // Run the changelog check and capture the output
                     def changelogOutput = sh(script: './check-changelog.sh', returnStdout: true).trim()
-                    // echo "Change Log Output: ${changelogOutput}"
                     
                     // Validate the output of the changelog script
                     if (changelogOutput.contains("Error")) {
@@ -58,19 +57,20 @@ pipeline {
     post {
         success {
             script {
-                    def recipients = findRecipients()
-                    def changelogContent = readChangelog()
-                    
-                    // get the version of the package.json
-                    def version = sh(script: 'node -p "require(\'./package.json\').version"', returnStdout: true).trim()
-                    if (recipients) {
-                        emailext(
-                            to: recipients.join(', '),
-                            subject: "UI-Library - Version ${version} Available",
-                            body: "The build was successful. A new version is now available.\n<h3> Change Log: </h3>\n\n${changelogContent}"
-                        )
-                    }
+                def recipients = findRecipients()
+                def changelogContent = readChangelog()
+
+                // Get the version of the package.json
+                def version = sh(script: 'node -p "require(\'./package.json\').version"', returnStdout: true).trim()
+                
+                if (recipients) {
+                    emailext(
+                        to: recipients.join(', '),
+                        subject: "UI-Library - Version ${version} Available",
+                        body: "The build was successful. A new version is now available.\n<h3> Change Log: </h3>\n\n${changelogContent}"
+                    )
                 }
+            }
             echo 'Pipeline executed successfully'
         }
         failure {
@@ -79,12 +79,11 @@ pipeline {
     }
 }
 
-// Helper function to find recipients with @siemens.com
+// Helper function to read recipients from a text file
 def findRecipients() {
-    def teamMembers = []
-    // List of email addresses with @siemens.com
-    teamMembers.addAll(["markyasser2011@gmail.com, bemoie.rian@gmail.com"]) // Add all relevant email addresses
-    return teamMembers
+    def recipientsFile = 'recipients.txt'  // The file with the emails
+    def emails = readFile(recipientsFile).split('\n').collect { it.trim() }
+    return emails.findAll { it } // Filter out any empty lines
 }
 
 // Helper function to read the CHANGELOG.md file
