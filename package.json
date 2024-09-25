@@ -1,8 +1,12 @@
 {
-  "name": "ui-library",
+  "name": "@markyasser/ui-library",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
+  "repository": "https://github.com/markyasser/ui-library.git",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
@@ -39,7 +43,7 @@
       "<rootDir>/src/setupTests.ts"
     ],
     "testPathIgnorePatterns": [
-      "<rootDir>/dist/", 
+      "<rootDir>/dist/",
       "<rootDir>/node_modules/"
     ],
     "collectCoverage": true,
