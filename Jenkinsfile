@@ -6,7 +6,7 @@ pipeline {
                 script {
                     // Run the changelog check and capture the output
                     def changelogOutput = sh(script: './check-changelog.sh', returnStdout: true).trim()
-                    echo "Change Log Output: ${changelogOutput}"
+                    // echo "Change Log Output: ${changelogOutput}"
                     
                     // Validate the output of the changelog script
                     if (changelogOutput.contains("Error")) {

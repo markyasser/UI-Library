@@ -13,7 +13,7 @@ check_format() {
     echo
 
     # Check for the changes section
-    if ! grep -q '^\s*## Changes :' "$file"; then
+    if ! grep -q '^\s*Changes :' "$file"; then
         echo "Error: Changes section not found or does not match '## Changes :'."
         return 1
     fi
