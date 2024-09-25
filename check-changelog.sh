@@ -29,16 +29,19 @@ echo "$sections" | while IFS= read -r section; do
   # Check if the section has a valid version header
   if ! echo "$section" | grep -qE "$version_regex"; then
     echo "❌ Error in section $section_count: Missing or incorrect version header. Expected format: '# Version x.x.x'"
+    exit 1
   fi
 
   # Check if the section has a valid '## Changes :' header
   if ! echo "$section" | grep -qE "$changes_header_regex"; then
     echo "❌ Error in section $section_count: Missing or incorrect '## Changes :' header."
+    exit 1
   fi
 
   # Check if the section contains a valid list of changes
   if ! echo "$section" | grep -qE "$changes_list_regex"; then
     echo "❌ Error in section $section_count: No numbered changes list found. Expected format: '1. xxx', '2. xxx', etc."
+    exit 1
   fi
 
   section_count=$((section_count + 1))
