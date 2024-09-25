@@ -55,6 +55,9 @@ pipeline {
 
                     // Login to the private registry using credentials stored in Jenkins
                     withCredentials([usernamePassword(credentialsId: '1234', passwordVariable: 'NPM_PASSWORD', usernameVariable: 'NPM_USERNAME')]) {
+                        // Log username and password for debugging (make sure to redact sensitive info)
+                        echo "Using username: ${NPM_USERNAME}"
+                        echo "Using password: [REDACTED]"  // Don't log the actual password
                         sh "echo '${NPM_PASSWORD}' | npm login --registry=http://localhost:4873/ --scope=@ui-library --username '${NPM_USERNAME}' --password-stdin"
                     }
 
