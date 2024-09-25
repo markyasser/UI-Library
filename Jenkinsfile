@@ -65,7 +65,7 @@ pipeline {
                         emailext(
                             to: recipients.join(', '),
                             subject: "New Version Available - Build #${env.BUILD_NUMBER}",
-                            body: "The build was successful. A new version is now available.\n\n### Change Log:\n${changelogContent}"
+                            body: "The build was successful. A new version is now available.\n\n### Change Log:\n${changelogContent}",
                             mimeType: 'text/plain'
                         )
                     }
@@ -82,7 +82,7 @@ pipeline {
 def findRecipients() {
     def teamMembers = []
     // List of email addresses with @siemens.com
-    teamMembers.addAll(["markyasser2011@gmail.com, bemoierian@gmail.com"]) // Add all relevant email addresses
+    teamMembers.addAll(["markyasser2011@gmail.com, bemoie.rian@gmail.com"]) // Add all relevant email addresses
     return teamMembers
 }
 
