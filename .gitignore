@@ -5,7 +5,6 @@ package-lock.json
 # Build output
 dist/
 coverage/
-.npmrc
 
 # Rollup cache
 .rollup.cache/
