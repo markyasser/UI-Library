@@ -1,18 +1,57 @@
 pipeline {
     agent any
     stages {
-        stage('Build Docker Image') {
+        stage('Check Change Log') {
             steps {
-                sh 'docker build -t react-ui-library .'
+                script {
+                    // Run the changelog check and capture the output
+                    def changelogOutput = sh(script: './check-changelog.sh', returnStdout: true).trim()
+                    echo "Change Log Output: ${changelogOutput}"
+                    
+                    // Validate the output of the changelog script
+                    if (changelogOutput.contains("Error")) { // Adjust this condition based on your script's output
+                        error("Changelog check failed. Please review the changelog.")
+                    }
+                }
             }
         }
-        stage('Push Docker Image') {
+        stage('Install Dependencies') {
             steps {
-                withCredentials([usernamePassword(credentialsId: '1234', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
-                    sh 'docker tag react-ui-library markos1001/react-ui-library:latest'
-                    sh 'docker push markos1001/react-ui-library:latest'
+                sh 'npm install'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'npm run test'
+            }
+        }
+        stage('Check Test Coverage') {
+            steps {
+                // Check the code coverage if it is above 95% then only proceed
+                script {
+                    def coverageOutput = sh(script: 'npm run test:coverage', returnStdout: true).trim()
+                    echo "Coverage Output: ${coverageOutput}"
+                    if (!coverageOutput.contains("Statements: 95%")) {
+                        error("Code coverage is below 95%.")
+                    }
                 }
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+        stage('Push To Private Registry') {
+            steps {
+                // Configure npm to use Verdaccio as the private registry
+                sh 'npm set registry http://localhost:4873/'
+
+                // Login to the private registry (if needed)
+                // sh 'npm login --registry=http://localhost:4873/'
+
+                // Publish the package
+                sh 'npm publish --registry http://localhost:4873/'
             }
         }
     }
