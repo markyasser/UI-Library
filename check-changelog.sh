@@ -1,47 +1,38 @@
 #!/bin/bash
 
-# Path to CHANGELOG.md
+# File name
 CHANGELOG_FILE="CHANGELOG.md"
 
-# Check if the changelog file exists
-if [ ! -f "$CHANGELOG_FILE" ]; then
-  echo "❌ Error: CHANGELOG.md file not found!"
-  exit 1
-fi
+# Function to check the format
+check_format() {
+    local file="$1"
 
-# Read the changelog file
-content=$(cat "$CHANGELOG_FILE")
+    # Print the content of the file for debugging
+    echo "Content of the file:"
+    cat -n "$file"  # Added line numbers for better visibility
+    echo
 
-# Regular expressions to validate the format
-version_regex="^# Version [0-9]\+\.[0-9]\+\.[0-9]\+"
-changes_header_regex="^## Changes :"
-changes_list_regex="^[0-9]\+\. .\+"
+    # Check for the version line (allow leading spaces)
+    if ! grep -qE '^\s*# Version [0-9]+\.[0-9]+\.[0-9]+\s*' "$file"; then
+        echo "Error: Version line does not match the format '# Version X.Y.Z'."
+        return 1
+    fi
 
-# Split the file by version headers to check each section
-sections=$(echo "$content" | awk '/^# Version/{split("",a);a[++i]=$0;next}{a[i]=a[i] RS $0}END{for (i in a) print a[i]}')
+    # Check for the changes section
+    if ! grep -q '^\s*## Changes :' "$file"; then
+        echo "Error: Changes section not found or does not match '## Changes :'."
+        return 1
+    fi
 
-section_count=1
+    # Check for the list items
+    if ! grep -q '^\s*[0-9]\+\.\s\+.*' "$file"; then
+        echo "Error: No changes listed in the format '1. Description'."
+        return 1
+    fi
 
-# Loop through each section and check the format
-echo "$sections" | while IFS= read -r section; do
-  echo "Checking section $section_count..."
+    echo "Format is correct."
+    return 0
+}
 
-  # Check if the section has a valid version header
-  if ! echo "$section" | grep -qE "$version_regex"; then
-    echo "❌ Error in section $section_count: Missing or incorrect version header. Expected format: '# Version x.x.x'"
-  fi
-
-  # Check if the section has a valid '## Changes :' header
-  if ! echo "$section" | grep -qE "$changes_header_regex"; then
-    echo "❌ Error in section $section_count: Missing or incorrect '## Changes :' header."
-  fi
-
-  # Check if the section contains a valid list of changes
-  if ! echo "$section" | grep -qE "$changes_list_regex"; then
-    echo "❌ Error in section $section_count: No numbered changes list found. Expected format: '1. xxx', '2. xxx', etc."
-  fi
-
-  section_count=$((section_count + 1))
-done
-
-echo "✅ CHANGELOG.md format check complete."
+# Call the format check function
+check_format "$CHANGELOG_FILE"

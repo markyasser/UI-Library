@@ -48,11 +48,18 @@ pipeline {
                 sh 'npm run build'
             }
         }
-        // stage('Push To Private Registry') {
-        //     steps {
-                
-        //     }
-        // }
+        stage('Push To Private Registry') {
+            steps {
+                // Configure npm to use Verdaccio as the private registry
+                sh 'npm set registry http://localhost:4873/'
+
+                // Login to the private registry (if needed)
+                sh 'npm login --registry=http://localhost:4873/'
+
+                // Publish the package
+                sh 'npm publish --registry http://localhost:4873/'
+            }
+        }
     }
     post {
         success {
