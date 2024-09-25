@@ -55,7 +55,7 @@ pipeline {
 
                     // Login to the private registry using credentials stored in Jenkins
                     withCredentials([usernamePassword(credentialsId: '1234', passwordVariable: 'NPM_PASSWORD', usernameVariable: 'NPM_USERNAME')]) {
-                        sh 'echo "${NPM_PASSWORD}" | npm login --registry=http://localhost:4873/ --scope=@ui-library --username "${NPM_USERNAME}" --password-stdin'
+                        sh "echo '${NPM_PASSWORD}' | npm login --registry=http://localhost:4873/ --scope=@ui-library --username '${NPM_USERNAME}' --password-stdin"
                     }
 
                     // Publish the package
