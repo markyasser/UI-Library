@@ -47,22 +47,22 @@ pipeline {
                 sh 'npm run build'
             }
         }
-        stage('Push To Private Registry') {
+        stage('Notify') {
+            when {
+                expression { currentBuild.result == 'SUCCESS' }
+            }
             steps {
                 script {
-                    // Configure npm to use Verdaccio as the private registry
-                    sh 'npm set registry http://localhost:4873/'
-
-                    // Login to the private registry using credentials stored in Jenkins
-                    withCredentials([usernamePassword(credentialsId: '1234', passwordVariable: 'NPM_PASSWORD', usernameVariable: 'NPM_USERNAME')]) {
-                        // Log username and password for debugging (make sure to redact sensitive info)
-                        echo "Using username: ${NPM_USERNAME}"
-                        echo "Using password: [REDACTED]"  // Don't log the actual password
-                        sh "echo '${NPM_PASSWORD}' | npm login --registry=http://localhost:4873/ --scope=@ui-library --username '${NPM_USERNAME}' --password-stdin"
+                    def recipients = findRecipients()
+                    def changelogContent = readChangelog()
+                    
+                    if (recipients) {
+                        emailext(
+                            to: recipients.join(', '),
+                            subject: "New Version Available - Build #${env.BUILD_NUMBER}",
+                            body: "The build was successful. A new version is now available.\n\n### Change Log:\n${changelogContent}"
+                        )
                     }
-
-                    // Publish the package
-                    sh 'npm publish --registry http://localhost:4873/'
                 }
             }
         }
@@ -75,4 +75,18 @@ pipeline {
             echo 'Pipeline execution failed'
         }
     }
+}
+
+// Helper function to find recipients with @siemens.com
+def findRecipients() {
+    def teamMembers = []
+    // List of email addresses with @siemens.com
+    teamMembers.addAll(["markyasser2011@gmail.com"]) // Add all relevant email addresses
+    return teamMembers
+}
+
+// Helper function to read the CHANGELOG.md file
+def readChangelog() {
+    def changelogFile = 'CHANGELOG.md'
+    return readFile(changelogFile).trim()
 }
