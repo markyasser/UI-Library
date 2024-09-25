@@ -29,10 +29,16 @@ pipeline {
             steps {
                 // Check the code coverage if it is above 95% then only proceed
                 script {
-                    def coverageOutput = sh(script: 'npm run test:coverage', returnStdout: true).trim()
-                    echo "Coverage Output: ${coverageOutput}"
-                    if (!coverageOutput.contains("Statements: 95%")) {
-                        error("Code coverage is below 95%.")
+                    // Run the tests and capture the output
+                    def testOutput = sh(script: 'npm run test', returnStdout: true).trim()
+                    echo "Test Output: ${testOutput}"
+
+                    // Check if coverage is above 95%
+                    def coveragePattern = /(?<=All files\s+\|.+?\|)[\d]+/
+                    def coverageMatch = (testOutput =~ coveragePattern)
+
+                    if (coverageMatch && coverageMatch[0].toInteger() < 95) {
+                        error("Code coverage is below 95%. Actual coverage: ${coverageMatch[0]}%.")
                     }
                 }
             }
@@ -42,18 +48,11 @@ pipeline {
                 sh 'npm run build'
             }
         }
-        stage('Push To Private Registry') {
-            steps {
-                // Configure npm to use Verdaccio as the private registry
-                sh 'npm set registry http://localhost:4873/'
-
-                // Login to the private registry (if needed)
-                // sh 'npm login --registry=http://localhost:4873/'
-
-                // Publish the package
-                sh 'npm publish --registry http://localhost:4873/'
-            }
-        }
+        // stage('Push To Private Registry') {
+        //     steps {
+                
+        //     }
+        // }
     }
     post {
         success {

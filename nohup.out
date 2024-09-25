@@ -1,0 +1,6 @@
+[36minfo [39m[37m[34m---[37m config file  - [32mC:\Users\marky\AppData\Roaming\verdaccio\config.yaml[37m[39m
+[36minfo [39m[37m[34m---[37m the "crypt" algorithm is deprecated consider switch to "bcrypt" in the configuration file. Read the documentation for additional details[39m
+[36minfo [39m[37m[34m---[37m using htpasswd file: [32mC:\Users\marky\AppData\Roaming\verdaccio\htpasswd[37m[39m
+[36minfo [39m[37m[34m---[37m plugin successfully loaded: [32mverdaccio[37m-[32mhtpasswd[37m[39m
+[36minfo [39m[37m[34m---[37m plugin successfully loaded: [32mverdaccio[37m-[32maudit[37m[39m
+[33mwarn [39m[37m[34m---[37m http address - [32mhttp://localhost:4873/[37m - [32mverdaccio/6.0.0[37m[39m
