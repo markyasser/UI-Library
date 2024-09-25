@@ -47,6 +47,22 @@ pipeline {
                 sh 'npm run build'
             }
         }
+        stage('Notify') {
+            steps {
+                script {
+                    def recipients = findRecipients()
+                    def changelogContent = readChangelog()
+                    
+                    if (recipients) {
+                        emailext(
+                            to: recipients.join(', '),
+                            subject: "New Version Available - Build #${env.BUILD_NUMBER}",
+                            body: "The build was successful. A new version is now available.\n\n### Change Log:\n${changelogContent}"
+                        )
+                    }
+                }
+            }
+        }
     }
     post {
         success {
