@@ -47,12 +47,10 @@ pipeline {
                 sh 'npm run build'
             }
         }
-        stage('Notify') {
-            when {
-                expression { currentBuild.result == 'SUCCESS' }
-            }
-            steps {
-                script {
+    }
+    post {
+        success {
+            script {
                     def recipients = findRecipients()
                     def changelogContent = readChangelog()
                     
@@ -64,11 +62,6 @@ pipeline {
                         )
                     }
                 }
-            }
-        }
-    }
-    post {
-        success {
             echo 'Pipeline executed successfully'
         }
         failure {
