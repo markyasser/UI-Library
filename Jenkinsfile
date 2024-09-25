@@ -58,24 +58,18 @@ pipeline {
     post {
         success {
             script {
-                def recipients = findRecipients()
-                def changelogContent = convertMarkdownToHtml('CHANGELOG.md')
-
-                if (recipients) {
-                    emailext(
-                        to: recipients.join(', '),
-                        subject: "New Version Available - Build #${env.BUILD_NUMBER}",
-                        body: """<html>
-                            <body>
-                                <p>The build was successful. A new version is now available.</p>
-                                <h3>Change Log:</h3>
-                                ${changelogContent}
-                            </body>
-                        </html>""",
-                        mimeType: 'text/html'
-                    )
+                    def recipients = findRecipients()
+                    def changelogContent = readChangelog()
+                    
+                    if (recipients) {
+                        emailext(
+                            to: recipients.join(', '),
+                            subject: "New Version Available - Build #${env.BUILD_NUMBER}",
+                            body: "The build was successful. A new version is now available.\n\n### Change Log:\n${changelogContent}"
+                            mimeType: 'text/plain'
+                        )
+                    }
                 }
-            }
             echo 'Pipeline executed successfully'
         }
         failure {
@@ -88,14 +82,12 @@ pipeline {
 def findRecipients() {
     def teamMembers = []
     // List of email addresses with @siemens.com
-    teamMembers.addAll(["markyasser2011@gmail.com"]) // Add all relevant email addresses
+    teamMembers.addAll(["markyasser2011@gmail.com, bemoierian@gmail.com"]) // Add all relevant email addresses
     return teamMembers
 }
 
-// Helper function to read and convert the CHANGELOG.md file from markdown to HTML
-def convertMarkdownToHtml(markdownFile) {
-    def markdownContent = readFile(markdownFile).trim()
-    // Convert the markdown content to HTML (you can use an external command or library)
-    def htmlContent = sh(script: "echo \"${markdownContent}\" | markdown", returnStdout: true).trim()
-    return htmlContent
+// Helper function to read the CHANGELOG.md file
+def readChangelog() {
+    def changelogFile = 'CHANGELOG.md'
+    return readFile(changelogFile).trim()
 }
