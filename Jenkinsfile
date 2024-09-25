@@ -47,11 +47,11 @@ pipeline {
                 sh 'npm run build'
             }
         }
-        // stage('Push on private registry') {
-        //     steps {
-                
-        //     }
-        // }
+        stage('Push on private registry') {
+            steps {
+                sh 'npm publish --access private'
+            }
+        }
     }
     post {
         success {
