@@ -61,12 +61,13 @@ pipeline {
                     def recipients = findRecipients()
                     def changelogContent = readChangelog()
                     
+                    // get the version of the package.json
+                    def version = sh(script: 'node -p "require(\'./package.json\').version"', returnStdout: true).trim()
                     if (recipients) {
                         emailext(
                             to: recipients.join(', '),
-                            subject: "New Version Available - Build #${env.BUILD_NUMBER}",
-                            body: "The build was successful. A new version is now available.\n\n### Change Log:\n${changelogContent}",
-                            mimeType: 'text/plain'
+                            subject: "UI-Library - Version ${version} Available",
+                            body: "The build was successful. A new version is now available.\n<h3> Change Log: </h3>\n\n${changelogContent}"
                         )
                     }
                 }
