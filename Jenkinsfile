@@ -1,3 +1,15 @@
+// Override the stage function to capture the failed stage and its message
+def stage(String name, Closure cl) {
+    try {
+        cl()
+    } catch (Exception e) {
+        if (!env.FAILED_STAGE) {
+            env.FAILED_STAGE = name
+            env.FAILED_MESSAGE = e.getMessage()
+        }
+    }
+}
+
 pipeline {
     agent any
     stages {
@@ -82,8 +94,8 @@ pipeline {
         }
         failure {
             script {
-                def failedStage = currentBuild.currentResult?.getDisplayName() ?: 'Unknown Stage'
-                def failureReason = currentBuild.rawBuild.getLog(10).join('\n')
+                def failedStage = env.FAILED_STAGE
+                def failureReason = env.FAILED_MESSAGE
 
                 emailext(
                     to: 'markyasser2011@gmail.com',
@@ -107,3 +119,4 @@ pipeline {
         }
     }
 }
+
