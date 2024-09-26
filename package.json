@@ -1,6 +1,6 @@
 {
   "name": "@markyasser/ui-library",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "main": "index.js",
   "type": "module",
   "repository": "https://github.com/markyasser/ui-library.git",
