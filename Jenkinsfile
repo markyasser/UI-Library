@@ -82,7 +82,6 @@ pipeline {
             echo 'Pipeline executed successfully'
         }
         failure {
-            echo 'Pipeline execution failed'
             script {
                 def failedStage = currentBuild.stages.find { it.status == 'FAILED' }
                 def failureReason = sh(script: 'tail -n 50 $WORKSPACE/console.log', returnStdout: true).trim()
@@ -105,6 +104,7 @@ pipeline {
                     """
                 )
             }
+            echo 'Pipeline execution failed'
         }
     }
 }
