@@ -27,6 +27,27 @@ check_format() {
     echo "Format is correct."
     return 0
 }
+# Function to read changelog
+read_changelog() {
+    local file="$1"
+
+    # Check if the file exists
+    if [[ ! -f $file ]]; then
+        echo "Changelog file not found!"
+        return 1
+    fi
+
+    # Read and process the changelog file
+    while IFS= read -r line; do
+        # Use regex to match the changelog entries
+        if [[ $line =~ ^([0-9]+)\.\ (.*) ]]; then
+            echo "${BASH_REMATCH[2]}"  # Output the change description
+        fi
+    done < "$file"
+}
 
 # Call the format check function
 check_format "$CHANGELOG_FILE"
+
+# Call the function
+read_changelog "$CHANGELOG_FILE"

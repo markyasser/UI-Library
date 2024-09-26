@@ -11,6 +11,10 @@ pipeline {
                     if (changelogOutput.contains("Error")) {
                         error("Changelog check failed. Please review the changelog.")
                     }
+                    else {
+                        // Store the changelog output for later use
+                        env.CHANGELOG_CHANGES = changelogOutput
+                    }
                 }
             }
         }
@@ -51,14 +55,15 @@ pipeline {
                 def changes = readChangelog()
 
                 // Check if changes were found
-                if (changes.isEmpty()) {
+                if (!env.CHANGELOG_CHANGES) {
                     echo "No changes found in the changelog."
                 } else {
-                    def htmlChanges = changes.collect { "<li>${it}</li>" }.join('\n')
+                    // Assuming the changes are comma-separated in the output
+                    def htmlChanges = env.CHANGELOG_CHANGES.split(',').collect { "<li>${it.trim()}</li>" }.join('\n')
 
                     // Get the version of the package.json
                     def version = sh(script: 'node -p "require(\'./package.json\').version"', returnStdout: true).trim()
-                    
+
                     if (recipients) {
                         emailext(
                             to: recipients.join(', '),
@@ -83,16 +88,3 @@ def findRecipients() {
     return emails.findAll { it } // Filter out any empty lines
 }
 
-// Helper function to read the CHANGELOG.md file
-def readChangelog() {
-    def changelogFile = 'CHANGELOG.md'
-    def changelogContent = readFile(changelogFile).trim()
-
-    def changesList = []
-    def matcher = changelogContent =~ /(\d+)\.\s+(.+)/
-    matcher.each { match ->
-        changesList.add(match[0][2].trim())
-    }
-
-    return changesList
-}
