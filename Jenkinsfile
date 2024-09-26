@@ -34,9 +34,6 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'npm run build'
-                // if (coverageCheck != 0) { // Error : send email to the ui-library team
-                    
-                // }
             }
         }
         stage('Push on private registry') {
@@ -52,17 +49,23 @@ pipeline {
             script {
                 def recipients = findRecipients()
                 def changes = readChangelog()
-                def htmlChanges = changes.collect { "<li>${it}</li>" }.join('\n')
 
-                // Get the version of the package.json
-                def version = sh(script: 'node -p "require(\'./package.json\').version"', returnStdout: true).trim()
-                
-                if (recipients) {
-                    emailext(
-                        to: recipients.join(', '),
-                        subject: "UI-Library - Version ${version} Available",
-                        body: "The build was successful. A new version is now available.\n<h3> Change Log: </h3>\n<ul>\n${htmlChanges}</ul>"
-                    )
+                // Check if changes were found
+                if (changes.isEmpty()) {
+                    echo "No changes found in the changelog."
+                } else {
+                    def htmlChanges = changes.collect { "<li>${it}</li>" }.join('\n')
+
+                    // Get the version of the package.json
+                    def version = sh(script: 'node -p "require(\'./package.json\').version"', returnStdout: true).trim()
+                    
+                    if (recipients) {
+                        emailext(
+                            to: recipients.join(', '),
+                            subject: "UI-Library - Version ${version} Available",
+                            body: "The build was successful. A new version is now available.<br/><h3>Change Log:</h3><ul>\n${htmlChanges}</ul>"
+                        )
+                    }
                 }
             }
             echo 'Pipeline executed successfully'
@@ -85,10 +88,11 @@ def readChangelog() {
     def changelogFile = 'CHANGELOG.md'
     def changelogContent = readFile(changelogFile).trim()
 
-    // Extract the changes
+    // Extract the changes using a regular expression
     def changesList = []
     def matcher = changelogContent =~ /(\d+\.\s+)(.*)/
     matcher.each { match ->
+        // Add the second capturing group (the actual change description) to the list
         changesList.add(match[0][1].trim())
     }
 
