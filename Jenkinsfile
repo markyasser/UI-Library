@@ -82,8 +82,8 @@ pipeline {
         }
         failure {
             script {
-                def failedStage = currentBuild.result ?: 'Unknown stage'
-                def failureReason = currentBuild.getBuildCauses()?.collect { it.getShortDescription() }?.join(', ') ?: 'No specific error message available'
+                def failedStage = currentBuild.currentResult?.getDisplayName() ?: 'Unknown Stage'
+                def failureReason = currentBuild.rawBuild.getLog(10).join('\n')
 
                 emailext(
                     to: 'markyasser2011@gmail.com',
