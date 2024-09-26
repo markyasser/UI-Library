@@ -83,7 +83,7 @@ pipeline {
         failure {
             script {
                 def failedStage = currentBuild.result ?: 'Unknown stage'
-                def failureReason = currentBuild.rawBuild.getLog(50).join('\n')
+                def failureReason = ""
 
                 emailext(
                     to: 'markyasser2011@gmail.com',
