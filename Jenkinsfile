@@ -7,14 +7,7 @@ pipeline {
                     // Run the changelog check and capture the output
                     def changelogOutput = sh(script: './check-changelog.sh', returnStdout: true).trim()
                     
-                    // Validate the output of the changelog script
-                    if (changelogOutput.contains("Error")) {
-                        error("Changelog check failed. Please review the changelog.")
-                    }
-                    else {
-                        // Store the changelog output for later use
-                        env.CHANGELOG_CHANGES = changelogOutput
-                    }
+                    env.CHANGELOG_CHANGES = changelogOutput
                 }
             }
         }
@@ -52,7 +45,6 @@ pipeline {
         success {
             script {
                 def recipients = findRecipients()
-                def changes = readChangelog()
 
                 // Check if changes were found
                 if (!env.CHANGELOG_CHANGES) {

@@ -14,7 +14,7 @@ check_format() {
 
     # Check for the changes section
     if ! grep -q '^\s*Changes :' "$file"; then
-        echo "Error: Changes section not found or does not match '## Changes :'."
+        echo "Error: Changes section not found or does not match 'Changes :'."
         return 1
     fi
 
@@ -27,6 +27,7 @@ check_format() {
     echo "Format is correct."
     return 0
 }
+
 # Function to read changelog
 read_changelog() {
     local file="$1"
@@ -49,5 +50,10 @@ read_changelog() {
 # Call the format check function
 check_format "$CHANGELOG_FILE"
 
-# Call the function
+# Check the exit status of the format check
+if [[ $? -ne 0 ]]; then
+    exit 1  # Exit with status 1 if format check failed
+fi
+
+# Call the function to read changelog
 read_changelog "$CHANGELOG_FILE"
