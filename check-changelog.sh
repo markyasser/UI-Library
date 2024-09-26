@@ -7,11 +7,6 @@ CHANGELOG_FILE="CHANGELOG.md"
 check_format() {
     local file="$1"
 
-    # Print the content of the file for debugging
-    echo "Content of the file:"
-    cat -n "$file"  # Added line numbers for better visibility
-    echo
-
     # Check for the changes section
     if ! grep -q '^\s*Changes :' "$file"; then
         echo "Error: Changes section not found or does not match 'Changes :'."
@@ -23,8 +18,6 @@ check_format() {
         echo "Error: No changes listed in the format '1. Description'."
         return 1
     fi
-
-    echo "Format is correct."
     return 0
 }
 

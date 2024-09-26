@@ -51,7 +51,7 @@ pipeline {
                     echo "No changes found in the changelog."
                 } else {
                     // Assuming the changes are comma-separated in the output
-                    def htmlChanges = env.CHANGELOG_CHANGES.split(',').collect { "<li>${it.trim()}</li>" }.join('\n')
+                    def htmlChanges = env.CHANGELOG_CHANGES.split('\n').collect { "<li>${it.trim()}</li>" }.join('\n')
 
                     // Get the version of the package.json
                     def version = sh(script: 'node -p "require(\'./package.json\').version"', returnStdout: true).trim()
