@@ -42,9 +42,6 @@ pipeline {
         }
     }
     post {
-        always {
-            echo 'This will run after every build, regardless of success or failure.'
-        }
         success {
             script {
                 if (currentBuild.result == 'SUCCESS') {
