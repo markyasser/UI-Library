@@ -86,12 +86,14 @@ def findRecipients() {
 // Helper function to read the CHANGELOG.md file
 def readChangelog() {
     def changelogFile = 'CHANGELOG.md'
-    def changelogContent = new File(changelogFile).text.trim()
+    def changelogContent = readFile(changelogFile).trim()
 
+    // Extract the changes using a regular expression
     def changesList = []
-    def matcher = changelogContent =~ /(\d+)\.\s+(.+)/
+    def matcher = changelogContent =~ /(\d+\.\s*)(.*)/
     matcher.each { match ->
-        changesList.add(match[0][2].trim())
+        // Add the second capturing group (the actual change description) to the list
+        changesList.add(match[0][0].trim())  
     }
 
     return changesList
