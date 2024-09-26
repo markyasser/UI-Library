@@ -93,7 +93,7 @@ def readChangelog() {
     def matcher = changelogContent =~ /(\d+\.\s+)(.*)/
     matcher.each { match ->
         // Add the second capturing group (the actual change description) to the list
-        changesList.add(match[0][1].trim())
+        changesList.add(match[0][2].trim())  // Change to match[0][2] for the description
     }
 
     return changesList
