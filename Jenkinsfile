@@ -24,7 +24,7 @@ pipeline {
         stage('Check Test Coverage') {
             steps {
                 script {
-                    sh './check-coverage.sh '
+                    sh './check-coverage.sh'
                 }
             }
         }
@@ -42,40 +42,42 @@ pipeline {
         }
     }
     post {
+        always {
+            echo 'This will run after every build, regardless of success or failure.'
+        }
         success {
             script {
-                def recipients = findRecipients()
+                if (currentBuild.result == 'SUCCESS') {
+                    def recipients = findRecipients()
 
-                // Check if changes were found
-                if (!env.CHANGELOG_CHANGES) {
-                    echo 'No changes found in the changelog.'
-                } else {
-                    // Assuming the changes are comma-separated in the output
-                    def htmlChanges = env.CHANGELOG_CHANGES.split('\n').collect { "<li>${it.trim()}</li>" }.join('\n')
+                    if (!env.CHANGELOG_CHANGES) {
+                        echo 'No changes found in the changelog.'
+                    } else {
+                        def htmlChanges = env.CHANGELOG_CHANGES.split('\n').collect { "<li>${it.trim()}</li>" }.join('\n')
 
-                    // Get the version of the package.json
-                    def version = sh(script: 'node -p "require(\'./package.json\').version"', returnStdout: true).trim()
+                        def version = sh(script: 'node -p "require(\'./package.json\').version"', returnStdout: true).trim()
 
-                    if (recipients) {
-                        emailext(
-                            to: recipients.join(', '),
-                            subject: "UI Library - Version ${version} Released",
-                            body: """
-                                <html>
-                                    <body>
-                                        <h2 style="color: #2C3E50;">Build Successful!</h2>
-                                        <p>Dear Team,</p>
-                                        <p>We are pleased to announce that a new version of the UI Library has been successfully built and is now available.</p>
-                                        <h3 style="color: #34495E;">Release Notes</h3>
-                                        <ul>
-                                            ${htmlChanges}
-                                        </ul>
-                                        <p>Thank you for your continued support!</p>
-                                        <p>Best regards,<br>Your CI/CD System</p>
-                                    </body>
-                                </html>
-                            """
-                        )
+                        if (recipients) {
+                            emailext(
+                                to: recipients.join(', '),
+                                subject: "UI Library - Version ${version} Released",
+                                body: """
+                                    <html>
+                                        <body>
+                                            <h2 style="color: #2C3E50;">Build Successful!</h2>
+                                            <p>Dear Team,</p>
+                                            <p>We are pleased to announce that a new version of the UI Library has been successfully built and is now available.</p>
+                                            <h3 style="color: #34495E;">Release Notes</h3>
+                                            <ul>
+                                                ${htmlChanges}
+                                            </ul>
+                                            <p>Thank you for your continued support!</p>
+                                            <p>Best regards,<br>Your CI/CD System</p>
+                                        </body>
+                                    </html>
+                                """
+                            )
+                        }
                     }
                 }
             }
@@ -86,7 +88,6 @@ pipeline {
                 def failedStage = currentBuild.result ?: 'Unknown stage'
                 def failureReason = sh(script: 'tail -n 50 ${env.WORKSPACE}/pipeline.log', returnStdout: true).trim()
 
-                // Send an email on failure
                 emailext(
                     to: 'markyasser2011@gmail.com',
                     subject: "Pipeline Failure - Stage: ${failedStage}",
@@ -109,11 +110,3 @@ pipeline {
         }
     }
 }
-
-// Helper function to read recipients from a text file
-def findRecipients() {
-    def recipientsFile = 'recipients.txt'  // The file with the emails
-    def emails = readFile(recipientsFile).split('\n').collect { it.trim() }
-    return emails.findAll { it } // Filter out any empty lines
-}
-
