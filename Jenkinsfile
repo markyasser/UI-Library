@@ -83,7 +83,7 @@ pipeline {
         failure {
             script {
                 def failedStage = currentBuild.result ?: 'Unknown stage'
-                def failureReason = currentBuild.getCause(hudson.model.Run.RunCauses).toString() ?: 'No specific error message available'
+                def failureReason = currentBuild.getBuildCauses()?.collect { it.getShortDescription() }?.join(', ') ?: 'No specific error message available'
 
                 emailext(
                     to: 'markyasser2011@gmail.com',
