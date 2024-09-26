@@ -6,6 +6,7 @@ def stage(String name, Closure cl) {
         if (!env.FAILED_STAGE) {
             env.FAILED_STAGE = name
             env.FAILED_MESSAGE = e.getMessage()
+            env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
         }
     }
 }
@@ -96,6 +97,7 @@ pipeline {
             script {
                 def failedStage = env.FAILED_STAGE
                 def failureReason = env.FAILED_MESSAGE
+                def failedOutput = env.FAILED_OUTPUT ?: "No additional output."
 
                 emailext(
                     to: 'markyasser2011@gmail.com',
@@ -108,6 +110,8 @@ pipeline {
                                 <p>The pipeline failed during the <strong>${failedStage}</strong> stage.</p>
                                 <h3 style="color: #C0392B;">Failure Details:</h3>
                                 <pre>${failureReason}</pre>
+                                <h3 style="color: #C0392B;">Output:</h3>
+                                <pre>${failedOutput}</pre>
                                 <p>Please investigate the issue at your earliest convenience.</p>
                                 <p>Best regards,<br>Your CI/CD System</p>
                             </body>
