@@ -11,7 +11,6 @@ pipeline {
                     } catch (Exception e) {
                         env.FAILED_STAGE = 'Check Change Log'
                         env.FAILED_MESSAGE = e.getMessage()
-                        env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
                         error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
                     }
                 }
@@ -27,7 +26,6 @@ pipeline {
                     } catch (Exception e) {
                         env.FAILED_STAGE = 'Install Dependencies'
                         env.FAILED_MESSAGE = e.getMessage()
-                        env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
                         error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
                     }
                 }
@@ -43,7 +41,6 @@ pipeline {
                     } catch (Exception e) {
                         env.FAILED_STAGE = 'Test'
                         env.FAILED_MESSAGE = e.getMessage()
-                        env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
                         error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
                     }
                 }
@@ -57,7 +54,6 @@ pipeline {
                     } catch (Exception e) {
                         env.FAILED_STAGE = 'Check Test Coverage'
                         env.FAILED_MESSAGE = e.getMessage()
-                        env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
                         error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
                     }
                 }
@@ -73,7 +69,6 @@ pipeline {
                     } catch (Exception e) {
                         env.FAILED_STAGE = 'Build'
                         env.FAILED_MESSAGE = e.getMessage()
-                        env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
                         error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
                     }
                 }
@@ -90,7 +85,6 @@ pipeline {
                         } catch (Exception e) {
                             env.FAILED_STAGE = 'Push on private registry'
                             env.FAILED_MESSAGE = e.getMessage()
-                            env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
                             error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
                         }
                     }
@@ -140,7 +134,6 @@ pipeline {
             script {
                 def failedStage = env.FAILED_STAGE
                 def failureReason = env.FAILED_MESSAGE
-                def failedOutput = env.FAILED_OUTPUT ?: "No additional output."
 
                 emailext(
                     to: 'markyasser2011@gmail.com',
@@ -153,8 +146,6 @@ pipeline {
                                 <p>The pipeline failed during the <strong>${failedStage}</strong> stage.</p>
                                 <h3 style="color: #C0392B;">Failure Details:</h3>
                                 <pre>${failureReason}</pre>
-                                <h3 style="color: #C0392B;">Output:</h3>
-                                <pre>${failedOutput}</pre>
                                 <p>Please investigate the issue at your earliest convenience.</p>
                                 <p>Best regards,<br>Your CI/CD System</p>
                             </body>
