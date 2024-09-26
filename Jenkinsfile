@@ -58,25 +58,24 @@ pipeline {
 
                     if (recipients) {
                         emailext(
-    to: recipients.join(', '),
-    subject: "UI Library - Version ${version} Released",
-    body: """
-        <html>
-            <body>
-                <h2 style="color: #2C3E50;">Build Successful!</h2>
-                <p>Dear Team,</p>
-                <p>We are pleased to announce that a new version of the UI Library has been successfully built and is now available.</p>
-                <h3 style="color: #34495E;">Release Notes</h3>
-                <ul>
-                    ${htmlChanges}
-                </ul>
-                <p>Thank you for your continued support!</p>
-                <p>Best regards,<br>Your CI/CD System</p>
-            </body>
-        </html>
-    """
-)
-
+                            to: recipients.join(', '),
+                            subject: "UI Library - Version ${version} Released",
+                            body: """
+                                <html>
+                                    <body>
+                                        <h2 style="color: #2C3E50;">Build Successful!</h2>
+                                        <p>Dear Team,</p>
+                                        <p>We are pleased to announce that a new version of the UI Library has been successfully built and is now available.</p>
+                                        <h3 style="color: #34495E;">Release Notes</h3>
+                                        <ul>
+                                            ${htmlChanges}
+                                        </ul>
+                                        <p>Thank you for your continued support!</p>
+                                        <p>Best regards,<br>Your CI/CD System</p>
+                                    </body>
+                                </html>
+                            """
+                        )
                     }
                 }
             }
