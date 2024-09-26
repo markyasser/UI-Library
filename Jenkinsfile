@@ -6,7 +6,7 @@ pipeline {
                 script {
                     // Run the changelog check and capture the output
                     def changelogOutput = sh(script: './check-changelog.sh', returnStdout: true).trim()
-                    
+
                     env.CHANGELOG_CHANGES = changelogOutput
                 }
             }
@@ -48,7 +48,7 @@ pipeline {
 
                 // Check if changes were found
                 if (!env.CHANGELOG_CHANGES) {
-                    echo "No changes found in the changelog."
+                    echo 'No changes found in the changelog.'
                 } else {
                     // Assuming the changes are comma-separated in the output
                     def htmlChanges = env.CHANGELOG_CHANGES.split('\n').collect { "<li>${it.trim()}</li>" }.join('\n')
@@ -82,7 +82,27 @@ pipeline {
             echo 'Pipeline executed successfully'
         }
         failure {
+            def failedStage = currentBuild.stages.find { it.status == 'FAILED' }
+            def failureReason = sh(script: 'tail -n 50 $WORKSPACE/console.log', returnStdout: true).trim()
             echo 'Pipeline execution failed'
+            // Send an email to the markyasser2011@gmail.com if the pipeline fails
+            emailext(
+                to:'markyasser2011@gmail.com',
+                subject: "Pipeline Failure - Stage: ${failedStage}",
+                body: """
+                    <html>
+                        <body>
+                            <h2 style="color: #E74C3C;">Pipeline Failed!</h2>
+                            <p>Dear Team,</p>
+                            <p>The pipeline failed during the <strong>${failedStage}</strong> stage.</p>
+                            <h3 style="color: #C0392B;">Failure Details:</h3>
+                            <pre>${failureReason}</pre>
+                            <p>Please investigate the issue at your earliest convenience.</p>
+                            <p>Best regards,<br>Your CI/CD System</p>
+                        </body>
+                    </html>
+                """
+            )
         }
     }
 }
