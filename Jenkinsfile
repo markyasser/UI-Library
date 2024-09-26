@@ -83,11 +83,12 @@ pipeline {
         }
         failure {
             script {
-                def failedStage = currentBuild.stages.find { it.status == 'FAILED' }
-                def failureReason = sh(script: 'tail -n 50 $WORKSPACE/console.log', returnStdout: true).trim()
-                // Send an email to the markyasser2011@gmail.com if the pipeline fails
+                def failedStage = currentBuild.result ?: 'Unknown stage'
+                def failureReason = sh(script: 'tail -n 50 ${env.WORKSPACE}/pipeline.log', returnStdout: true).trim()
+
+                // Send an email on failure
                 emailext(
-                    to:'markyasser2011@gmail.com',
+                    to: 'markyasser2011@gmail.com',
                     subject: "Pipeline Failure - Stage: ${failedStage}",
                     body: """
                         <html>
