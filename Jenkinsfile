@@ -86,7 +86,7 @@ pipeline {
         failure {
             script {
                 def failedStage = currentBuild.result ?: 'Unknown stage'
-                def failureReason = sh(script: "tail -n 50 ${env.WORKSPACE}/pipeline.log", returnStdout: true).trim()
+                def failureReason = currentBuild.rawBuild.getLog(50).join('\n')
 
                 emailext(
                     to: 'markyasser2011@gmail.com',
