@@ -36,13 +36,13 @@ pipeline {
                 sh 'npm run build'
             }
         }
-        stage('Push on private registry') {
-            steps {
-                withCredentials([string(credentialsId: 'npm-auth-token', variable: 'NPM_TOKEN')]) {
-                    sh 'npm publish'
-                }
-            }
-        }
+        // stage('Push on private registry') {
+        //     steps {
+        //         withCredentials([string(credentialsId: 'npm-auth-token', variable: 'NPM_TOKEN')]) {
+        //             sh 'npm publish'
+        //         }
+        //     }
+        // }
     }
     post {
         success {
