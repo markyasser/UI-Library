@@ -90,10 +90,10 @@ def readChangelog() {
 
     // Extract the changes using a regular expression
     def changesList = []
-    def matcher = changelogContent =~ /(\d+\.\s+)(.*)/
+    def matcher = changelogContent =~ /(\d+\.\s*)(.*)/
     matcher.each { match ->
         // Add the second capturing group (the actual change description) to the list
-        changesList.add(match[0][2].trim())  // Change to match[0][2] for the description
+        changesList.add(match[0][0].trim())  
     }
 
     return changesList
