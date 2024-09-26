@@ -66,7 +66,7 @@ pipeline {
                 <h2 style="color: #2C3E50;">Build Successful!</h2>
                 <p>Dear Team,</p>
                 <p>We are pleased to announce that a new version of the UI Library has been successfully built and is now available.</p>
-                <h3 style="color: #34495E;">Change Log:</h3>
+                <h3 style="color: #34495E;">Release Notes</h3>
                 <ul>
                     ${htmlChanges}
                 </ul>
