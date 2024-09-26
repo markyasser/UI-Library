@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Card Component matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    style="border: 1px solid #ddd; padding: 1rem; border-radius: 5px;"
+  >
+    <h3>
+      Test Title
+    </h3>
+    <p>
+      Test Content
+    </p>
+    <div
+      style="margin-top: 1rem; border-top: 1px solid #ccc; padding-top: 0.5rem;"
+    >
+      <button>
+        Like
+      </button>
+      <span>
+        0 Likes
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;

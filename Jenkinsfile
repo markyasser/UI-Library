@@ -34,6 +34,9 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'npm run build'
+                // if (coverageCheck != 0) { // Error : send email to the ui-library team
+                    
+                // }
             }
         }
         stage('Push on private registry') {
