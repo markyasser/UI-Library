@@ -1,16 +1,3 @@
-// Override the stage function to capture the failed stage and its message
-def stage(String name, Closure cl) {
-    try {
-        cl()
-    } catch (Exception e) {
-        if (!env.FAILED_STAGE) {
-            env.FAILED_STAGE = name
-            env.FAILED_MESSAGE = e.getMessage()
-            env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
-        }
-    }
-}
-
 pipeline {
     agent any
     stages {
@@ -18,38 +5,95 @@ pipeline {
             steps {
                 script {
                     // Run the changelog check and capture the output
-                    def changelogOutput = sh(script: './check-changelog.sh', returnStdout: true).trim()
-
-                    env.CHANGELOG_CHANGES = changelogOutput
+                    try {
+                        def changelogOutput = sh(script: './check-changelog.sh', returnStdout: true).trim()
+                        env.CHANGELOG_CHANGES = changelogOutput
+                    } catch (Exception e) {
+                        env.FAILED_STAGE = 'Check Change Log'
+                        env.FAILED_MESSAGE = e.getMessage()
+                        env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
+                        error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
+                    }
                 }
             }
         }
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                script {
+                    try {
+                        // Capture output of npm install
+                        def installOutput = sh(script: 'npm install', returnStdout: true).trim()
+                        echo installOutput
+                    } catch (Exception e) {
+                        env.FAILED_STAGE = 'Install Dependencies'
+                        env.FAILED_MESSAGE = e.getMessage()
+                        env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
+                        error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
+                    }
+                }
             }
         }
         stage('Test') {
             steps {
-                sh 'npm run test'
+                script {
+                    try {
+                        // Capture output of npm test
+                        def testOutput = sh(script: 'npm run test', returnStdout: true).trim()
+                        echo testOutput
+                    } catch (Exception e) {
+                        env.FAILED_STAGE = 'Test'
+                        env.FAILED_MESSAGE = e.getMessage()
+                        env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
+                        error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
+                    }
+                }
             }
         }
         stage('Check Test Coverage') {
             steps {
                 script {
-                    sh './check-coverage.sh'
+                    try {
+                        sh './check-coverage.sh'
+                    } catch (Exception e) {
+                        env.FAILED_STAGE = 'Check Test Coverage'
+                        env.FAILED_MESSAGE = e.getMessage()
+                        env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
+                        error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
+                    }
                 }
             }
         }
         stage('Build') {
             steps {
-                sh 'npm run build'
+                script {
+                    try {
+                        // Capture output of npm run build
+                        def buildOutput = sh(script: 'npm run build', returnStdout: true).trim()
+                        echo buildOutput
+                    } catch (Exception e) {
+                        env.FAILED_STAGE = 'Build'
+                        env.FAILED_MESSAGE = e.getMessage()
+                        env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
+                        error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
+                    }
+                }
             }
         }
         stage('Push on private registry') {
             steps {
                 withCredentials([string(credentialsId: 'npm-auth-token', variable: 'NPM_TOKEN')]) {
-                    sh 'npm publish'
+                    script {
+                        try {
+                            // Capture output of npm publish
+                            def publishOutput = sh(script: 'npm publish', returnStdout: true).trim()
+                            echo publishOutput
+                        } catch (Exception e) {
+                            env.FAILED_STAGE = 'Push on private registry'
+                            env.FAILED_MESSAGE = e.getMessage()
+                            env.FAILED_OUTPUT = e.getCause() ? e.getCause().getMessage() : "No additional output."
+                            error("Stage failed: ${env.FAILED_STAGE}") // Mark the stage as failed
+                        }
+                    }
                 }
             }
         }
@@ -64,7 +108,6 @@ pipeline {
                         echo 'No changes found in the changelog.'
                     } else {
                         def htmlChanges = env.CHANGELOG_CHANGES.split('\n').collect { "<li>${it.trim()}</li>" }.join('\n')
-
                         def version = sh(script: 'node -p "require(\'./package.json\').version"', returnStdout: true).trim()
 
                         if (recipients) {
@@ -123,4 +166,3 @@ pipeline {
         }
     }
 }
-
