@@ -51,7 +51,8 @@ pipeline {
         success {
             script {
                 def recipients = findRecipients()
-                def changelogContent = readChangelog()
+                def changes = readChangelog()
+                def htmlChanges = changes.collect { "<li>${it}</li>" }.join('\n')
 
                 // Get the version of the package.json
                 def version = sh(script: 'node -p "require(\'./package.json\').version"', returnStdout: true).trim()
@@ -60,7 +61,7 @@ pipeline {
                     emailext(
                         to: recipients.join(', '),
                         subject: "UI-Library - Version ${version} Available",
-                        body: "The build was successful. A new version is now available.\n<h3> Change Log: </h3>\n\n${changelogContent}"
+                        body: "The build was successful. A new version is now available.\n<h3> Change Log: </h3>\n<ul>\n${htmlChanges}</ul>"
                     )
                 }
             }
@@ -82,5 +83,14 @@ def findRecipients() {
 // Helper function to read the CHANGELOG.md file
 def readChangelog() {
     def changelogFile = 'CHANGELOG.md'
-    return readFile(changelogFile).trim()
+    def changelogContent = readFile(changelogFile).trim()
+
+    // Extract the changes
+    def changesList = []
+    def matcher = changelogContent =~ /(\d+\.\s+)(.*)/
+    matcher.each { match ->
+        changesList.add(match[0][1].trim())
+    }
+
+    return changesList
 }
