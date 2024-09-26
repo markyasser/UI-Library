@@ -27,17 +27,7 @@ pipeline {
         stage('Check Test Coverage') {
             steps {
                 script {
-                    // Run the tests and capture the output
-                    def testOutput = sh(script: 'npm run test', returnStdout: true).trim()
-                    echo "Test Output: ${testOutput}"
-
-                    // Check if coverage is above 95%
-                    def coveragePattern = /(?<=All files\s+\|.+?\|)[\d]+/
-                    def coverageMatch = (testOutput =~ coveragePattern)
-
-                    if (coverageMatch && coverageMatch[0].toInteger() < 95) {
-                        error("Code coverage is below 95%. Actual coverage: ${coverageMatch[0]}%.")
-                    }
+                    sh './check-coverage.sh '
                 }
             }
         }
